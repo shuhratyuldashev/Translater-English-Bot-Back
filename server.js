@@ -4,30 +4,33 @@ import { translate } from "@vitalets/google-translate-api";
 import pLimit from 'p-limit';
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-const startBackend = async () => {
-    app.listen(3000, () => {
-        console.log('Server is running on port 3000');
-    });
-};
+app.use(cors()); 
+app.use(express.json());
 
 const limit = pLimit(2); 
 
+app.get("/", (req, res) => {
+    res.send("Translation API is running 🚀");
+});
+
 app.post("/translate", async (req, res) => {
-    const { text, from, to } = req.body;
-  
-    if (!text) {
-        return res.status(400).json({ error: "Текст не может быть пустым" });
+    const { text, from = "auto", to = "en" } = req.body;
+
+    if (!text || typeof text !== "string") {
+        return res.status(400).json({ error: "Некорректный ввод текста" });
     }
-  
+
     try {
         const result = await limit(() => translate(text, { from, to }));
         res.json({ translatedText: result.text });
     } catch (error) {
         console.error("Ошибка перевода:", error);
-        res.status(500).json({ error: "Ошибка перевода. Подождите немного и попробуйте снова." });
+        res.status(500).json({ error: "Ошибка перевода. Попробуйте снова позже." });
     }
 });
-startBackend();
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
