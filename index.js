@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { translate } from "@vitalets/google-translate-api";
 import pLimit from 'p-limit';
+import dotenv from "dotenv";
 
 dotenv.config();
 
