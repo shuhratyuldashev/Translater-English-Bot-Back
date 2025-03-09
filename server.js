@@ -3,6 +3,8 @@ import cors from 'cors';
 import { translate } from "@vitalets/google-translate-api";
 import pLimit from 'p-limit';
 
+dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
